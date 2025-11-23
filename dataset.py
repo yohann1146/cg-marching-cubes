@@ -2,7 +2,7 @@ import numpy as np
 import random
 
 # Load npz archive
-data = np.load('adrenalmnist3d.npz')
+data = np.load('adrenalmnist3d_64.npz')
 # ['train_images', 'val_images', 'test_images', 'train_labels', 'val_labels', 'test_labels'] 
 
 #4d array of images
