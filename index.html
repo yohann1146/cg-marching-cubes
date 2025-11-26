@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Graphics Project: Marching Cubes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --primary-color: #2c2c2c;
+            --secondary-color: #00aaff;
+            --text-color: #f0f0f0;
+            --subtle-text-color: #a0a0a0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.8;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 960px;
+            padding: 20px;
+        }
+
+        header {
+            width: 100vw;
+            height: 265px;
+            margin: 0;
+            padding: 80px 20px;
+            box-sizing: border-box;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(0, 170, 255, 0.1), rgba(0, 0, 0, 0));
+            border-bottom: 1px solid var(--primary-color);
+        }
+
+
+        header h1 {
+            font-size: 3em;
+            font-weight: 600; 
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: var(--secondary-color);
+            font-weight: 300;
+        }
+
+       
+
+        h2 {
+            font-size: 2em;
+            font-weight: 600;
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        .section {
+            background-color: var(--primary-color);
+            padding: 30px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+        }
+
+        code {
+            background-color: #333;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
+        }
+
+        .code-block {
+            background-color: #111;
+            color: #f1f1f1;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid #444;
+            font-family: "Courier New", Courier, monospace;
+            margin-top: 15px;
+        }
+        
+        strong {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .step-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #fff;
+            font-size: 1.2em;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 50px;
+            color: var(--subtle-text-color);
+            border-top: 1px solid var(--primary-color);
+            width: 100%;
+        }
+
+        /* Gallery styles */
+        .gallery-row {
+            display: flex;
+            gap: 18px;
+            margin-top: 18px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .image-card {
+            width: 30%;
+            min-width: 180px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            background-color: #0f0f0f;
+            border: 1px dashed rgba(255,255,255,0.04);
+        }
+
+        .image-caption {
+            font-size: 0.95em;
+            color: var(--subtle-text-color);
+        }
+
+        .btn {
+            background-color: var(--secondary-color);
+            color: #0a0a0a;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Marching Cubes Algorithm</h1>
+        <p>A C++ implementation for 3D model generation from medical imaging data.</p>
+        
+    </header>
+
+    <div class="container">
+        <main>
+            <div class="section" id="introduction">
+                <h2>Introduction</h2>
+                <p>This project is an implementation of the <strong>Marching Cubes</strong> algorithm, a well-known technique in computer graphics for extracting a polygonal mesh of an isosurface from a 3D scalar field. The implementation is done in C++ and demonstrates the process of generating a 3D model from a medical imaging dataset.</p>
+            </div>
+
+            <div class="section" id="marching-cubes">
+                <h2>The Marching Cubes Algorithm</h2>
+                <p>The Marching Cubes algorithm processes a 3D grid of scalar values (voxels). For each cube (a cell of 8 neighboring voxels) in the grid, it determines how the isosurface intersects that cube. Based on which of the 8 vertices of the cube are inside or outside the surface (determined by comparing their values to a threshold), the algorithm looks up a corresponding polygonalization of the cube in a pre-calculated lookup table. By combining the polygons from all cubes, a complete 3D mesh of the surface is generated.</p>
+            </div>
+
+            <div class="section" id="dataset">
+                <h2>Dataset: MedMNIST 3D</h2>
+                <p>The dataset used for this project is the <strong>MedMNIST 3D adrenal dataset</strong>. This is a collection of 3D medical images. For this project, a single image is extracted from the dataset, converted into a simple text format, and then used as the input for the Marching Cubes algorithm.</p>
+            </div>
+
+            
+
+            <div class="section" id="output">
+                <h2>Output</h2>
+                <p>The program will generate an <code>output.off</code> file. The <code>.off</code> (Object File Format) file contains the vertices and faces of the generated 3D mesh. This file can be viewed using 3D modeling software like MeshLab or Blender.</p>
+            </div>
+
+            <!-- Gallery for showing 3 images -->
+            <div class="section" id="gallery">
+              
+                
+                <div class="gallery-row">
+                    <div class="image-card">
+                        <img id="img1" src="images/img1.png" alt="Image 1 placeholder"/>
+                        <div class="image-caption">Adrenal Gland</div>
+                    </div>
+
+                    <div class="image-card">
+                        <img id="img2" src="images/img2.png" alt="Image 2 placeholder"/>
+                        <div class="image-caption">Ellipsoid</div>
+                    </div>
+
+                    <div class="image-card">
+                        <img id="img3" src="images/img3.png" alt="Image 3 placeholder"/>
+                        <div class="image-caption">Adrenal Gland</div>
+                    </div>
+                </div>
+
+                
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>By Aarush Kanipakam and Yohann Miglani</p>
+    </footer>
+
+    <script>
+        // Preview up to 3 images selected by the user
+        (function () {
+            const input = document.getElementById('imageFiles');
+            const slots = [
+                {img: document.getElementById('img1'), caption: document.querySelector('#img1 + .image-caption')},
+                {img: document.getElementById('img2'), caption: document.querySelector('#img2 + .image-caption')},
+                {img: document.getElementById('img3'), caption: document.querySelector('#img3 + .image-caption')}
+            ];
+
+            function previewFiles(files) {
+                const arr = Array.from(files).slice(0, 3);
+                // reset others
+                slots.forEach(s => { s.img.src = s.img.getAttribute('data-default') || s.img.src; });
+
+                arr.forEach((file, i) => {
+                    if (!file.type.startsWith('image/')) return;
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        slots[i].img.src = e.target.result;
+                        slots[i].caption.textContent = file.name;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // store default src so resetting keeps placeholder if needed
+            slots.forEach(s => s.img.setAttribute('data-default', s.img.src));
+
+            input.addEventListener('change', function (e) {
+                previewFiles(e.target.files);
+            });
+
+            // optional: allow drag+drop on the gallery row
+            const gallery = document.querySelector('.gallery-row');
+            if (gallery) {
+                gallery.addEventListener('dragover', e => e.preventDefault());
+                gallery.addEventListener('drop', e => {
+                    e.preventDefault();
+                    if (e.dataTransfer && e.dataTransfer.files) {
+                        previewFiles(e.dataTransfer.files);
+                    }
+                });
+            }
+        })();
+    </script>
+
+</body>
+</html>
